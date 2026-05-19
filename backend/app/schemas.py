@@ -32,3 +32,11 @@ class ArticleResponse(ArticleCreate):
 
     class Config:
         from_attributes = True
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class TokenResponse(BaseModel):
+    token: str      
