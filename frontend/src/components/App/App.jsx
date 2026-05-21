@@ -1,28 +1,87 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
+
+import CurrentUserContext from "../../contexts/CurrentUserContext";
+import * as auth from "../../utils/auth";
+import { saveArticle, searchNews } from "../../utils/newsApi";
 
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import SavedNews from "../SavedNews/SavedNews";
 import SearchForm from "../SearchForm/SearchForm";
 import NewsCardList from "../NewsCardList/NewsCardList";
-import { searchNews } from "../../utils/newsApi";
+import LoginModal from "../LoginModal/LoginModal";
+import RegisterModal from "../RegisterModal/RegisterModal";
 
-function HomePage() {
+function HomePage({ onSearch,
+  articles,
+  isLoading,
+  searchError,
+  onLoginClick,
+  onSaveArticle, }) {
+  return (
+    <>
+      <Header onLoginClick={onLoginClick} />
+      <main>
+        <section className="hero">
+          <h1 className="hero__title">What's going on in the world?</h1>
+          <p className="hero__subtitle">
+            Find the latest news on any topic and save them in your personal account.
+          </p>
+          <SearchForm onSearch={onSearch} />
+        </section>
+
+        {isLoading && <p className="app__status">Searching...</p>}
+        {searchError && <p className="app__error">{searchError}</p>}
+        {!isLoading && articles.length > 0 && (
+  <NewsCardList articles={articles} onSaveArticle={onSaveArticle} />
+)}
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+
+
+export default function App() {
+  const [currentUser, setCurrentUser] = useState(null);
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchError, setSearchError] = useState("");
+  const [activeModal, setActiveModal] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+
+    if (!token) return;
+
+    auth
+      .getCurrentUser(token)
+      .then((userData) => {
+        setCurrentUser(userData);
+      })
+      .catch(() => {
+        localStorage.removeItem("jwt");
+        setCurrentUser(null);
+      });
+  }, []);
 
   function handleSearch(query) {
     setIsLoading(true);
     setSearchError("");
 
     searchNews(query)
-      .then((data) => {
-        setArticles(data.articles || []);
-      })
+  .then((data) => {
+    const articlesWithKeyword = (data.articles || []).map((article) => ({
+      ...article,
+      searchKeyword: query,
+    }));
+
+    setArticles(articlesWithKeyword);
+  })
       .catch((err) => {
         console.error(err);
         setSearchError("Something went wrong while searching for news.");
@@ -32,34 +91,97 @@ function HomePage() {
       });
   }
 
-  return (
-    <>
-      <Header />
-      <main>
-        <section className="hero">
-          <h1 className="hero__title">What's going on in the world?</h1>
-          <p className="hero__subtitle">
-            Find the latest news on any topic and save them in your personal account.
-          </p>
-          <SearchForm onSearch={handleSearch} />
-        </section>
+  function handleSaveArticle(article) {
+  const token = localStorage.getItem("jwt");
 
-        {isLoading && <p className="app__status">Searching...</p>}
-        {searchError && <p className="app__error">{searchError}</p>}
-        {!isLoading && articles.length > 0 && <NewsCardList articles={articles} />}
-      </main>
-      <Footer />
-    </>
-  );
+  if (!token) {
+    setActiveModal("login");
+    return;
+  }
+
+  saveArticle(article, article.searchKeyword || "general", token)
+    .then((savedArticle) => {
+      console.log("Article saved:", savedArticle);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 }
 
-export default function App() {
+  function handleOpenLoginModal() {
+    setActiveModal("login");
+  }
+
+  function handleOpenRegisterModal() {
+    setActiveModal("register");
+  }
+
+  function handleCloseModal() {
+    setActiveModal(null);
+  }
+
+  function handleRegister(userData) {
+    auth
+      .signup(userData)
+      .then(() => {
+        setActiveModal("login");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  function handleLogin(userData) {
+    auth
+      .signin(userData)
+      .then((data) => {
+        localStorage.setItem("jwt", data.token);
+        return auth.getCurrentUser(data.token);
+      })
+      .then((userData) => {
+        setCurrentUser(userData);
+        setActiveModal(null);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/saved-news" element={<SavedNews />} />
-      </Routes>
-    </BrowserRouter>
+    <CurrentUserContext.Provider value={currentUser}>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                onSearch={handleSearch}
+                articles={articles}
+                isLoading={isLoading}
+                searchError={searchError}
+                onLoginClick={handleOpenLoginModal}
+                onSaveArticle={handleSaveArticle}
+              />
+            }
+          />
+          <Route path="/saved-news" element={<SavedNews />} />
+        </Routes>
+
+        <LoginModal
+          isOpen={activeModal === "login"}
+          onClose={handleCloseModal}
+          onLogin={handleLogin}
+          onRegisterClick={handleOpenRegisterModal}
+        />
+
+        <RegisterModal
+          isOpen={activeModal === "register"}
+          onClose={handleCloseModal}
+          onRegister={handleRegister}
+        />
+      </BrowserRouter>
+    </CurrentUserContext.Provider>
   );
 }
