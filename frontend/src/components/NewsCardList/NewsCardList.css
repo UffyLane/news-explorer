@@ -1,0 +1,17 @@
+.news-card-list {
+  padding: 80px 104px;
+  background-color: #f5f6f7;
+}
+
+.news-card-list__title {
+  margin: 0 0 64px;
+  font-size: 40px;
+  line-height: 46px;
+  font-weight: 400;
+}
+
+.news-card-list__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
