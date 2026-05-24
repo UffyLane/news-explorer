@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: ./backend
+    container_name: news-explorer-backend
+    ports:
+     - "3001:3000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: news-explorer-frontend
+    ports:
+       - "8081:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

@@ -1,7 +1,24 @@
 {
     "cSpell.words": [
+        "anyio",
         "apikey",
-        "GNEWS"
+        "certifi",
+        "dnspython",
+        "dotenv",
+        "fastapi",
+        "GNEWS",
+        "idna",
+        "njsproj",
+        "ntvs",
+        "passlib",
+        "psycopg",
+        "pyasn",
+        "pycache",
+        "pydantic",
+        "starlette",
+        "urllib",
+        "uvicorn",
+        "venv"
     ],
     "python-envs.defaultEnvManager": "ms-python.python:system"
 }

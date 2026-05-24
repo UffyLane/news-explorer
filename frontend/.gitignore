@@ -32,3 +32,6 @@ __pycache__
 venv
 .env
 *.db
+
+.env.local
+.env.production

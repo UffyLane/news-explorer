@@ -17,7 +17,7 @@ import RegisterModal from "../RegisterModal/RegisterModal";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import Preloader from "../Preloader/Preloader";
 import NothingFound from "../NothingFound/NothingFound";
-import SuccessModal from "../SuccessModal/successModal";
+import SuccessModal from "../SuccessModal/SuccessModal";
 
 function HomePage({  onSearch,
   articles,
