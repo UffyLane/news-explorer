@@ -60,3 +60,44 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.news-card__delete-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.news-card__keyword {
+  margin: 0 0 12px;
+  color: #2f71e5;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.news-card__image-container {
+  position: relative;
+}
+
+.news-card__tooltip {
+  position: absolute;
+  top: 16px;
+  right: 60px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fff;
+  color: #1a1b22;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.news-card__image-container:hover .news-card__tooltip {
+  opacity: 1;
+}

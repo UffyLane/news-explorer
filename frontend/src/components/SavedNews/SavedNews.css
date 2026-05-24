@@ -1,3 +1,23 @@
 .saved-news {
-  padding: 40px;
+  min-height: 100vh;
+  background: #f5f6f7;
+}
+
+.saved-news__header {
+  padding: 120px 104px 56px;
+  background: #fff;
+}
+
+.saved-news__label {
+  margin: 0 0 28px;
+  color: #1a1b2280;
+  font-size: 18px;
+}
+
+.saved-news__title {
+  max-width: 530px;
+  margin: 0;
+  font-size: 40px;
+  line-height: 46px;
+  font-weight: 400;
 }

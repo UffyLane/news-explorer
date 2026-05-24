@@ -5,7 +5,7 @@ import "./App.css";
 
 import CurrentUserContext from "../../contexts/CurrentUserContext";
 import * as auth from "../../utils/auth";
-import { saveArticle, searchNews } from "../../utils/newsApi";
+import { saveArticle, searchNews, getSavedArticles, deleteArticle, } from "../../utils/newsApi";
 
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
@@ -14,16 +14,25 @@ import SearchForm from "../SearchForm/SearchForm";
 import NewsCardList from "../NewsCardList/NewsCardList";
 import LoginModal from "../LoginModal/LoginModal";
 import RegisterModal from "../RegisterModal/RegisterModal";
+import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
+import Preloader from "../Preloader/Preloader";
+import NothingFound from "../NothingFound/NothingFound";
 
-function HomePage({ onSearch,
+function HomePage({  onSearch,
   articles,
   isLoading,
   searchError,
   onLoginClick,
-  onSaveArticle, }) {
+  onSaveArticle,
+  onLogout,
+  savedArticles,
+  hasSearched,
+  
+  
+ }) {
   return (
     <>
-      <Header onLoginClick={onLoginClick} />
+      <Header onLoginClick={onLoginClick} onLogout={onLogout} />
       <main>
         <section className="hero">
           <h1 className="hero__title">What's going on in the world?</h1>
@@ -33,10 +42,25 @@ function HomePage({ onSearch,
           <SearchForm onSearch={onSearch} />
         </section>
 
-        {isLoading && <p className="app__status">Searching...</p>}
-        {searchError && <p className="app__error">{searchError}</p>}
-        {!isLoading && articles.length > 0 && (
-  <NewsCardList articles={articles} onSaveArticle={onSaveArticle} />
+        {isLoading && <Preloader />}
+
+{searchError && (
+  <p className="app__error">{searchError}</p>
+)}
+
+{hasSearched &&
+  !isLoading &&
+  !searchError &&
+  articles.length === 0 && (
+    <NothingFound />
+)}
+
+{!isLoading && articles.length > 0 && (
+  <NewsCardList
+    articles={articles}
+    onSaveArticle={onSaveArticle}
+    savedArticles={savedArticles}
+  />
 )}
       </main>
       <Footer />
@@ -49,9 +73,11 @@ function HomePage({ onSearch,
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [articles, setArticles] = useState([]);
+  const [savedArticles, setSavedArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchError, setSearchError] = useState("");
   const [activeModal, setActiveModal] = useState(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -62,16 +88,22 @@ export default function App() {
       .getCurrentUser(token)
       .then((userData) => {
         setCurrentUser(userData);
+        return getSavedArticles(token);
       })
-      .catch(() => {
-        localStorage.removeItem("jwt");
-        setCurrentUser(null);
-      });
-  }, []);
+       .then((savedArticlesData) => {
+      setSavedArticles(savedArticlesData || []);
+    })
+    .catch(() => {
+      localStorage.removeItem("jwt");
+      setCurrentUser(null);
+    });
+}, []);
 
   function handleSearch(query) {
     setIsLoading(true);
     setSearchError("");
+    setHasSearched(true);
+
 
     searchNews(query)
   .then((data) => {
@@ -99,9 +131,32 @@ export default function App() {
     return;
   }
 
+  const existingArticle = savedArticles.find(
+    (savedArticle) => savedArticle.link === article.url
+  );
+
+  if (existingArticle) {
+    deleteArticle(existingArticle.id, token)
+      .then(() => {
+        setSavedArticles((currentArticles) =>
+          currentArticles.filter(
+            (savedArticle) => savedArticle.id !== existingArticle.id
+          )
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    return;
+  }
+
   saveArticle(article, article.searchKeyword || "general", token)
     .then((savedArticle) => {
-      console.log("Article saved:", savedArticle);
+      setSavedArticles((currentArticles) => [
+        ...currentArticles,
+        savedArticle,
+      ]);
     })
     .catch((err) => {
       console.error(err);
@@ -146,7 +201,10 @@ export default function App() {
         console.error(err);
       });
   }
-
+function handleLogout() {
+  localStorage.removeItem("jwt");
+  setCurrentUser(null);
+}
   
 
   return (
@@ -157,16 +215,26 @@ export default function App() {
             path="/"
             element={
               <HomePage
-                onSearch={handleSearch}
-                articles={articles}
-                isLoading={isLoading}
-                searchError={searchError}
-                onLoginClick={handleOpenLoginModal}
-                onSaveArticle={handleSaveArticle}
-              />
+  onSearch={handleSearch}
+  articles={articles}
+  isLoading={isLoading}
+  searchError={searchError}
+  onLoginClick={handleOpenLoginModal}
+  onSaveArticle={handleSaveArticle}
+  onLogout={handleLogout}
+  savedArticles={savedArticles}
+  hasSearched={hasSearched}
+/>
             }
           />
-          <Route path="/saved-news" element={<SavedNews />} />
+         <Route
+  path="/saved-news"
+  element={
+    <ProtectedRoute isLoggedIn={!!currentUser}>
+      <SavedNews onLogout={handleLogout} />
+    </ProtectedRoute>
+  }
+/>
         </Routes>
 
         <LoginModal

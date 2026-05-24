@@ -26,6 +26,27 @@ def create_article(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
+    existing_article = (
+        db.query(models.Article)
+        .filter(
+            models.Article.owner_id == current_user.id,
+            models.Article.link == article_data.link,
+        )
+        .first()
+    )
+
+    if existing_article:
+        raise HTTPException(
+            status_code=409,
+            detail="Article already saved",
+        )
+
+    article = models.Article(
+        **article_data.model_dump(),
+        owner_id=current_user.id,
+    )
+    
+    
     article = models.Article(
         **article_data.model_dump(),
         owner_id=current_user.id,

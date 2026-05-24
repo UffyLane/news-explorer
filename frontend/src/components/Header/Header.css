@@ -44,3 +44,9 @@
   font-size: 18px;
   cursor: pointer;
 }
+
+.header_theme_dark {
+  color: #1a1b22;
+  background: #fff;
+  box-shadow: inset 0 -1px rgba(209, 210, 214, 1);
+}

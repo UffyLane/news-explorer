@@ -1,14 +1,21 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import CurrentUserContext from "../../contexts/CurrentUserContext";
 import "./Header.css";
 
-export default function Header({ onLoginClick }) {
+export default function Header({ onLoginClick, onLogout }) {
   const currentUser = useContext(CurrentUserContext);
+  const location = useLocation();
+
+  const isSavedNewsPage = location.pathname === "/saved-news";
 
   return (
-    <header className="header">
+    <header
+      className={`header ${
+        isSavedNewsPage ? "header_theme_dark" : ""
+      }`}
+    >
       <Link className="header__logo" to="/">
         NewsExplorer
       </Link>
@@ -23,12 +30,21 @@ export default function Header({ onLoginClick }) {
             <Link className="header__link" to="/saved-news">
               Saved articles
             </Link>
-            <button className="header__user-button" type="button">
-              {currentUser.name}
+
+            <button
+              className="header__user-button"
+              type="button"
+              onClick={onLogout}
+            >
+              {currentUser.name} ⎋
             </button>
           </>
         ) : (
-          <button className="header__signin-button" type="button" onClick={onLoginClick}>
+          <button
+            className="header__signin-button"
+            type="button"
+            onClick={onLoginClick}
+          >
             Sign in
           </button>
         )}

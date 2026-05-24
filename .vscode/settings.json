@@ -2,5 +2,6 @@
     "cSpell.words": [
         "apikey",
         "GNEWS"
-    ]
+    ],
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }
