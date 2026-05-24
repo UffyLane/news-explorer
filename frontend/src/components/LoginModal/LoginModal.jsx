@@ -3,26 +3,45 @@ import { useState } from "react";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import "./LoginModal.css";
 
-export default function LoginModal({ isOpen, onClose, onLogin, onRegisterClick }) {
+export default function LoginModal({
+  isOpen,
+  onClose,
+  onLogin,
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(e) {
-    e.preventDefault();
+function handleSubmit(e) {
+  e.preventDefault();
 
-    onLogin({
-      email,
-      password,
+  setErrorMessage("");
+  setIsSubmitting(true);
+
+  onLogin({
+    email,
+    password,
+  })
+    .catch((err) => {
+      if (String(err).includes("401")) {
+        setErrorMessage("Incorrect email or password.");
+      } else {
+        setErrorMessage("Something went wrong.");
+      }
+    })
+    .finally(() => {
+      setIsSubmitting(false);
     });
-  }
+}
 
   return (
     <ModalWithForm
       title="Sign in"
-      buttonText="Sign in"
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
+      buttonText={isSubmitting ? "Signing in..." : "Sign in"}
     >
       <label className="login-modal__label">
         Email
@@ -48,13 +67,11 @@ export default function LoginModal({ isOpen, onClose, onLogin, onRegisterClick }
         />
       </label>
 
-      <button
-        className="login-modal__switch"
-        type="button"
-        onClick={onRegisterClick}
-      >
-        Sign up
-      </button>
+      {errorMessage && (
+        <p className="login-modal__error-message">
+          {errorMessage}
+        </p>
+      )}
     </ModalWithForm>
   );
 }

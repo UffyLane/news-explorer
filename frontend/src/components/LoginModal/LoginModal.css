@@ -26,3 +26,10 @@
   color: #2f71e5;
   cursor: pointer;
 }
+
+.login-modal__error-message {
+  margin-top: 16px;
+  color: #ff4d4f;
+  font-size: 14px;
+  text-align: center;
+}

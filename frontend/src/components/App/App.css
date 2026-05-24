@@ -41,3 +41,50 @@ body {
 }
 
 
+.app__show-more {
+  display: block;
+  width: 288px;
+  height: 64px;
+  margin: 0 auto 80px;
+  border: none;
+  border-radius: 80px;
+  background: #fff;
+  color: #1a1b22;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .hero {
+    padding: 120px 40px 80px;
+  }
+
+  .hero__title {
+    max-width: 385px;
+    font-size: 48px;
+    line-height: 52px;
+  }
+
+  .hero__subtitle {
+    max-width: 452px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .hero {
+    padding: 100px 16px 48px;
+  }
+
+  .hero__title {
+    max-width: 285px;
+    font-size: 36px;
+    line-height: 40px;
+  }
+
+  .hero__subtitle {
+    margin-bottom: 80px;
+    font-size: 20px;
+    line-height: 26px;
+  }
+}

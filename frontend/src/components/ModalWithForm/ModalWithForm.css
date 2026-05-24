@@ -46,3 +46,40 @@
   color: #fff;
   cursor: pointer;
 }
+
+.modal__error-message {
+  margin-top: 16px;
+  color: #ff4d4f;
+  font-size: 14px;
+  text-align: center;
+}
+
+.modal__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media screen and (max-width: 640px) {
+  .modal__container {
+  width: calc(100% - 32px);
+  padding: 64px 16px 24px;
+}
+
+  .modal__title {
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  .modal__submit {
+    width: 100%;
+  }
+
+ .modal__close {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  color: #1a1b22;
+}
+}

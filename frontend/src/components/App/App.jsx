@@ -17,6 +17,7 @@ import RegisterModal from "../RegisterModal/RegisterModal";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import Preloader from "../Preloader/Preloader";
 import NothingFound from "../NothingFound/NothingFound";
+import SuccessModal from "../SuccessModal/successModal";
 
 function HomePage({  onSearch,
   articles,
@@ -27,6 +28,8 @@ function HomePage({  onSearch,
   onLogout,
   savedArticles,
   hasSearched,
+ visibleArticlesCount,
+onShowMore, 
   
   
  }) {
@@ -56,11 +59,23 @@ function HomePage({  onSearch,
 )}
 
 {!isLoading && articles.length > 0 && (
-  <NewsCardList
-    articles={articles}
-    onSaveArticle={onSaveArticle}
-    savedArticles={savedArticles}
-  />
+  <>
+    <NewsCardList
+      articles={articles.slice(0, visibleArticlesCount)}
+      onSaveArticle={onSaveArticle}
+      savedArticles={savedArticles}
+    />
+
+    {visibleArticlesCount < articles.length && (
+      <button
+        className="app__show-more"
+        type="button"
+        onClick={onShowMore}
+      >
+        Show more
+      </button>
+    )}
+  </>
 )}
       </main>
       <Footer />
@@ -78,6 +93,8 @@ export default function App() {
   const [searchError, setSearchError] = useState("");
   const [activeModal, setActiveModal] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [visibleArticlesCount, setVisibleArticlesCount] = useState(3);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -103,6 +120,7 @@ export default function App() {
     setIsLoading(true);
     setSearchError("");
     setHasSearched(true);
+    setVisibleArticlesCount(3);
 
 
     searchNews(query)
@@ -174,20 +192,28 @@ export default function App() {
   function handleCloseModal() {
     setActiveModal(null);
   }
+function handleCloseSuccessModal() {
+  setIsSuccessModalOpen(false);
+}
+function handleOpenLoginFromSuccess() {
+  setIsSuccessModalOpen(false);
+  setActiveModal("login");
+}
 
   function handleRegister(userData) {
-    auth
+    return auth
       .signup(userData)
-      .then(() => {
-        setActiveModal("login");
-      })
+     .then(() => {
+  setActiveModal(null);
+  setIsSuccessModalOpen(true);
+})
       .catch((err) => {
         console.error(err);
       });
   }
 
   function handleLogin(userData) {
-    auth
+    return auth
       .signin(userData)
       .then((data) => {
         localStorage.setItem("jwt", data.token);
@@ -197,13 +223,15 @@ export default function App() {
         setCurrentUser(userData);
         setActiveModal(null);
       })
-      .catch((err) => {
-        console.error(err);
-      });
+      
   }
 function handleLogout() {
   localStorage.removeItem("jwt");
   setCurrentUser(null);
+}
+
+function handleShowMore() {
+  setVisibleArticlesCount((currentCount) => currentCount + 3);
 }
   
 
@@ -224,6 +252,8 @@ function handleLogout() {
   onLogout={handleLogout}
   savedArticles={savedArticles}
   hasSearched={hasSearched}
+  visibleArticlesCount={visibleArticlesCount}
+onShowMore={handleShowMore}
 />
             }
           />
@@ -249,6 +279,12 @@ function handleLogout() {
           onClose={handleCloseModal}
           onRegister={handleRegister}
         />
+<SuccessModal
+  isOpen={isSuccessModalOpen}
+  onClose={handleCloseSuccessModal}
+  onLoginClick={handleOpenLoginFromSuccess}
+/>
+
       </BrowserRouter>
     </CurrentUserContext.Provider>
   );

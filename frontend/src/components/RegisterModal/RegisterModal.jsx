@@ -3,25 +3,44 @@ import { useState } from "react";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import "./RegisterModal.css";
 
-export default function RegisterModal({ isOpen, onClose, onRegister }) {
+export default function RegisterModal({
+  isOpen,
+  onClose,
+  onRegister,
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    onRegister({
-      email,
-      password,
-      name,
-    });
+    setErrorMessage("");
+    setIsSubmitting(true);
+
+onRegister({
+  email,
+  password,
+  name,
+})
+  .catch((err) => {
+    if (String(err).includes("409")) {
+      setErrorMessage("This email is already registered.");
+    } else {
+      setErrorMessage("Something went wrong.");
+    }
+  })
+  .finally(() => {
+    setIsSubmitting(false);
+  });
   }
 
   return (
     <ModalWithForm
       title="Sign up"
-      buttonText="Sign up"
+       buttonText={isSubmitting ? "Signing up..." : "Sign up"}
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
@@ -61,6 +80,12 @@ export default function RegisterModal({ isOpen, onClose, onRegister }) {
           required
         />
       </label>
+
+      {errorMessage && (
+        <p className="register-modal__error-message">
+          {errorMessage}
+        </p>
+      )}
     </ModalWithForm>
   );
 }

@@ -25,9 +25,9 @@ export default function ModalWithForm({
         <h2 className="modal__title">{title}</h2>
         <form className="modal__form" onSubmit={onSubmit}>
           {children}
-          <button className="modal__submit" type="submit">
-            {buttonText}
-          </button>
+          <button className="modal__submit" type="submit" disabled={buttonText.includes("...")}>
+  {buttonText}
+</button>
         </form>
       </div>
     </div>
