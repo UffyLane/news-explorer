@@ -1,20 +1,42 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: news-explorer-db
+    environment:
+      POSTGRES_DB: news_explorer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   backend:
     build: ./backend
     container_name: news-explorer-backend
     ports:
-     - "3001:3000"
+      - "3001:3000"
     env_file:
       - ./backend/.env
-    volumes:
-      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   frontend:
     build: ./frontend
     container_name: news-explorer-frontend
     ports:
-       - "8081:80"
+      - "8081:80"
     depends_on:
       - backend
     restart: unless-stopped
+
+volumes:
+  postgres_data:

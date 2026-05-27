@@ -7,33 +7,34 @@ export default function LoginModal({
   isOpen,
   onClose,
   onLogin,
+  onRegisterClick,
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-function handleSubmit(e) {
-  e.preventDefault();
+  function handleSubmit(e) {
+    e.preventDefault();
 
-  setErrorMessage("");
-  setIsSubmitting(true);
+    setErrorMessage("");
+    setIsSubmitting(true);
 
-  onLogin({
-    email,
-    password,
-  })
-    .catch((err) => {
-      if (String(err).includes("401")) {
-        setErrorMessage("Incorrect email or password.");
-      } else {
-        setErrorMessage("Something went wrong.");
-      }
+    onLogin({
+      email,
+      password,
     })
-    .finally(() => {
-      setIsSubmitting(false);
-    });
-}
+      .catch((err) => {
+        if (String(err).includes("401")) {
+          setErrorMessage("Incorrect email or password.");
+        } else {
+          setErrorMessage("Something went wrong.");
+        }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  }
 
   return (
     <ModalWithForm
@@ -68,10 +69,16 @@ function handleSubmit(e) {
       </label>
 
       {errorMessage && (
-        <p className="login-modal__error-message">
-          {errorMessage}
-        </p>
+        <p className="login-modal__error-message">{errorMessage}</p>
       )}
+
+      <button
+        className="login-modal__switch"
+        type="button"
+        onClick={onRegisterClick}
+      >
+        Sign up
+      </button>
     </ModalWithForm>
   );
 }
