@@ -1,16 +1,127 @@
-# React + Vite
+# News Explorer Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+The frontend is a React + Vite application responsible for:
+- News search UI
+- User authentication flows
+- Article saving/bookmarking
+- Responsive layouts
+- Client-side routing
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The frontend is containerized with Docker and served through Nginx in production.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React
+- Vite
+- React Router
+- Context API
+- CSS
+- Docker
+- Nginx
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Installation
+
+```bash
+cd frontend
+npm install
+```
+
+---
+
+## Development Server
+
+```bash
+npm run dev
+```
+
+Default local URL:
+
+```txt
+http://localhost:5173
+```
+
+---
+
+## Environment Variables
+
+Create:
+
+```txt
+.env.local
+```
+
+Add:
+
+```env
+VITE_API_BASE_URL=http://localhost:3001
+```
+
+---
+
+## Production Build
+
+```bash
+npm run build
+```
+
+Preview production build:
+
+```bash
+npm run preview
+```
+
+---
+
+## Docker
+
+### Build container
+
+```bash
+docker build -t news-explorer-frontend .
+```
+
+### Run container
+
+```bash
+docker run -p 8081:80 news-explorer-frontend
+```
+
+---
+
+## Testing Checklist
+
+### Authentication
+- User can sign up
+- User can sign in
+- JWT token persists
+- User can log out
+
+### News Features
+- Search returns articles
+- Articles render correctly
+- Saved articles persist
+
+### Responsive Design
+- Desktop layout works
+- Tablet layout works
+- Mobile layout works
+
+---
+
+## Deployment
+
+Frontend is deployed through:
+- Vercel
+- Nginx production serving
+
+---
+
+## Author
+
+Stuart G. Clark Jr.
