@@ -1,15 +1,35 @@
-# News Explorer Frontend
+# News Explorer — Frontend
 
-## Overview
+> **React + Vite frontend for the News Explorer application.**
 
-The frontend is a React + Vite application responsible for:
-- News search UI
-- User authentication flows
-- Article saving/bookmarking
-- Responsive layouts
-- Client-side routing
+🗞️ **[Live App](https://news-explorer-sage.vercel.app)** | ⚙️ **[Backend Repo](https://github.com/UffyLane/news-explorer/tree/main/backend)**
 
-The frontend is containerized with Docker and served through Nginx in production.
+---
+
+## About
+
+The frontend for News Explorer — a news search and bookmarking app. Built with React and Vite, served through Nginx in production, and containerized with Docker for consistent local development.
+
+---
+
+## Try It
+
+**Live app:** https://news-explorer-sage.vercel.app
+
+Test credentials:
+- **Email:** test@newsexplorer.com
+- **Password:** Test1234!
+
+---
+
+## Features
+
+- **News search** — search any topic and get real-time results
+- **Authentication** — sign up, log in, JWT token persistence
+- **Save articles** — bookmark articles to your personal dashboard
+- **Protected routes** — dashboard requires authentication
+- **Responsive design** — mobile and desktop layouts
+- **Nginx production serving** — optimized static file delivery
 
 ---
 
@@ -17,49 +37,77 @@ The frontend is containerized with Docker and served through Nginx in production
 
 - React
 - Vite
-- React Router
+- React Router v6
 - Context API
-- CSS
+- CSS Modules
 - Docker
 - Nginx
 
 ---
 
-## Installation
+## Project Structure
+
+```
+frontend/
+│
+├── src/
+│   ├── components/
+│   │   ├── Header/
+│   │   ├── SearchForm/
+│   │   ├── NewsCard/
+│   │   ├── SavedArticles/
+│   │   ├── LoginModal/
+│   │   ├── RegisterModal/
+│   │   └── ProtectedRoute/
+│   ├── pages/
+│   │   ├── Main/
+│   │   └── SavedNews/
+│   ├── contexts/
+│   │   └── CurrentUserContext.js
+│   └── utils/
+│       ├── api.js          # Backend API calls
+│       └── newsApi.js      # News API calls
+│
+├── nginx.conf              # Production Nginx config
+└── Dockerfile
+```
+
+---
+
+## Running Locally
 
 ```bash
 cd frontend
 npm install
 ```
 
----
-
-## Development Server
+Create `.env.local`:
+```
+VITE_API_BASE_URL=http://localhost:3001
+```
 
 ```bash
 npm run dev
+# runs at http://localhost:5173
 ```
 
-Default local URL:
-
-```txt
-http://localhost:5173
-```
+> You'll need the backend running locally too. See the [backend README](../backend/README.md) or use `docker compose up` from the root to start everything at once.
 
 ---
 
-## Environment Variables
+## Docker
 
-Create:
-
-```txt
-.env.local
+**Build and run standalone:**
+```bash
+docker build -t news-explorer-frontend .
+docker run -p 8081:80 news-explorer-frontend
 ```
 
-Add:
-
-```env
-VITE_API_BASE_URL=http://localhost:3001
+**Or run the full stack:**
+```bash
+# from the project root
+docker compose up --build
+# frontend at http://localhost:8081
 ```
 
 ---
@@ -68,60 +116,26 @@ VITE_API_BASE_URL=http://localhost:3001
 
 ```bash
 npm run build
-```
-
-Preview production build:
-
-```bash
 npm run preview
 ```
 
 ---
 
-## Docker
-
-### Build container
-
-```bash
-docker build -t news-explorer-frontend .
-```
-
-### Run container
-
-```bash
-docker run -p 8081:80 news-explorer-frontend
-```
-
----
-
-## Testing Checklist
-
-### Authentication
-- User can sign up
-- User can sign in
-- JWT token persists
-- User can log out
-
-### News Features
-- Search returns articles
-- Articles render correctly
-- Saved articles persist
-
-### Responsive Design
-- Desktop layout works
-- Tablet layout works
-- Mobile layout works
-
----
-
 ## Deployment
 
-Frontend is deployed through:
-- Vercel
-- Nginx production serving
+- **Platform:** Vercel (auto-deploys from `main`)
+- **Production server:** Nginx serves the built static files inside the Docker container
 
 ---
 
 ## Author
 
-Stuart G. Clark Jr.
+**Stuart G. Clark Jr.**
+[GitHub](https://github.com/UffyLane)
+
+---
+
+## License
+
+MIT
+

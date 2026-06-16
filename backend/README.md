@@ -1,32 +1,86 @@
-# News Explorer Backend
+# News Explorer — Backend
 
-## Overview
+> **FastAPI backend for the News Explorer application.**
 
-The backend is a FastAPI service responsible for:
-- User authentication
-- JWT token generation
-- Database management
-- Saved article persistence
-- API routing
-- PostgreSQL integration
+⚙️ **[Live API](https://news-explorer-7bgk.onrender.com)** | 📖 **[Swagger Docs](https://news-explorer-7bgk.onrender.com/docs)** | 🗞️ **[Frontend App](https://news-explorer-sage.vercel.app)**
 
-The backend runs inside a Docker container and connects to Neon PostgreSQL in production.
+---
+
+## About
+
+REST API for News Explorer built with Python and FastAPI. Handles user authentication, JWT token management, and saved article persistence using PostgreSQL. Deployed on Render as a Docker container.
+
+> Note: Hosted on Render's free tier — first request may take ~50 seconds to wake up.
+
+---
+
+## Interactive API Docs
+
+FastAPI auto-generates live Swagger documentation:
+
+**https://news-explorer-7bgk.onrender.com/docs**
+
+You can explore and test every endpoint directly in the browser without Postman.
+
+---
+
+## Test Credentials
+
+- **Email:** test@newsexplorer.com
+- **Password:** Test1234!
 
 ---
 
 ## Tech Stack
 
+- Python
 - FastAPI
-- SQLAlchemy
+- SQLAlchemy ORM
 - PostgreSQL
 - Pydantic
-- JWT Authentication
-- Docker
+- JWT authentication
 - Uvicorn
+- Docker
 
 ---
 
-## Installation
+## Project Structure
+
+```
+backend/
+│
+├── app/
+│   ├── main.py            # App entry point, route registration
+│   ├── models/            # SQLAlchemy database models
+│   ├── routes/            # API route handlers
+│   │   ├── auth.py        # /signup, /login
+│   │   ├── users.py       # /users/me
+│   │   ├── news.py        # /news/search
+│   │   └── articles.py    # /articles CRUD
+│   ├── schemas/           # Pydantic request/response schemas
+│   └── auth/              # JWT token logic
+│
+├── requirements.txt
+└── Dockerfile
+```
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/signup` | No | Create account |
+| POST | `/login` | No | Log in, receive JWT |
+| GET | `/users/me` | Yes | Get current user |
+| GET | `/news/search` | No | Search news articles |
+| GET | `/articles` | Yes | Get saved articles |
+| POST | `/articles` | Yes | Save an article |
+| DELETE | `/articles/{id}` | Yes | Delete saved article |
+
+---
+
+## Running Locally
 
 ```bash
 cd backend
@@ -35,110 +89,40 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
----
-
-## Environment Variables
-
-Create:
-
-```txt
-.env
+Create `.env`:
 ```
-
-Add:
-
-```env
 DATABASE_URL=postgresql://postgres:postgres@db:5432/news_explorer
 SECRET_KEY=your_secret_key
 ```
 
----
-
-## Run Local Server
-
 ```bash
 uvicorn app.main:app --reload
+# runs at http://localhost:3000
+# docs at http://localhost:3000/docs
 ```
 
-Default backend URL:
-
-```txt
-http://localhost:3000
-```
-
-Swagger docs:
-
-```txt
-http://localhost:3000/docs
-```
-
----
-
-## Docker
-
-### Build backend image
-
+**Or run the full stack with Docker from the project root:**
 ```bash
-docker build -t news-explorer-backend .
+docker compose up --build
 ```
-
-### Run backend container
-
-```bash
-docker run --env-file .env -p 3001:3000 news-explorer-backend
-```
-
----
-
-## Database
-
-### Local Development
-- PostgreSQL container through Docker Compose
-
-### Production
-- Neon PostgreSQL
-
----
-
-## API Features
-
-- User registration
-- User login
-- JWT validation
-- Protected routes
-- Saved articles CRUD
-- SQLAlchemy ORM integration
-
----
-
-## Testing Checklist
-
-### Authentication
-- User registration succeeds
-- Login returns JWT
-- Invalid credentials fail properly
-
-### Database
-- PostgreSQL connection works
-- Tables generate correctly
-- Saved articles persist
-
-### API
-- Routes return expected status codes
-- Protected endpoints require auth
-- Swagger docs load successfully
 
 ---
 
 ## Deployment
 
-Backend is deployed through:
-- Render
-- Docker containers
-- PostgreSQL cloud database
+- **Platform:** Render (Docker container deployment)
+- **Database:** Neon PostgreSQL (serverless cloud PostgreSQL)
 
 ---
 
 ## Author
 
-Stuart G. Clark Jr.
+**Stuart G. Clark Jr.**
+[GitHub](https://github.com/UffyLane)
+
+---
+
+## License
+
+MIT
+
