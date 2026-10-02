@@ -2,7 +2,11 @@ import { useContext, useEffect, useState } from "react";
 
 import Header from "../Header/Header";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
-import { deleteArticle, getSavedArticles } from "../../utils/newsApi";
+import {
+  deleteArticle,
+  getSavedArticles,
+  summarizeArticle,
+} from "../../utils/newsApi";
 import NewsCardList from "../NewsCardList/NewsCardList";
 import "./SavedNews.css";
 
@@ -40,6 +44,26 @@ export default function SavedNews({onLogout}) {
     });
 }
 
+  function handleSummarizeArticle(article) {
+    const token = localStorage.getItem("jwt");
+
+    if (!token) return Promise.reject(new Error("Not signed in"));
+
+    return summarizeArticle(article.id, token).then((result) => {
+      setSavedArticles((currentArticles) =>
+        currentArticles.map((savedArticle) =>
+          savedArticle.id === article.id
+            ? {
+                ...savedArticle,
+                summary: result.summary,
+                summary_basis: result.summary_basis,
+              }
+            : savedArticle
+        )
+      );
+    });
+  }
+
 return (
   <>
     <Header onLogout={onLogout} />
@@ -54,6 +78,7 @@ return (
       <NewsCardList
         articles={savedArticles}
         onDeleteArticle={handleDeleteArticle}
+        onSummarizeArticle={handleSummarizeArticle}
         isSavedNewsPage
       />
     </main>

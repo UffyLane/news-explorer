@@ -5,6 +5,7 @@ export default function NewsCardList({
   articles,
   onSaveArticle,
   onDeleteArticle,
+  onSummarizeArticle,
   isSavedNewsPage,
   savedArticles,
 }) {
@@ -26,6 +27,7 @@ export default function NewsCardList({
       article={article}
       onSaveArticle={onSaveArticle}
       onDeleteArticle={onDeleteArticle}
+      onSummarizeArticle={onSummarizeArticle}
       isSavedNewsPage={isSavedNewsPage}
       isSaved={isSaved}
     />

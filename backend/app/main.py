@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 
 from app import models
-from app.database import Base, engine
+from app.database import Base, ensure_article_summary_columns, engine
 from app.routes import auth
 from app.routes import articles, auth, users, news
 from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)
+ensure_article_summary_columns()
 
 app = FastAPI(title="News Explorer API")
 app.add_middleware(

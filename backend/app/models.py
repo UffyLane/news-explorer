@@ -26,6 +26,10 @@ class Article(Base):
     source = Column(String, nullable=False)
     link = Column(String, nullable=False)
     image = Column(String, nullable=True)
+    summary = Column(Text, nullable=True)
+    # "full_text" if the summary came from the fetched page, "snippet" if only
+    # the short excerpt saved from the news API was available.
+    summary_basis = Column(String, nullable=True)
 
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 

@@ -49,3 +49,12 @@ export function deleteArticle(articleId, token) {
     },
   }).then(handleResponse);
 }
+
+export function summarizeArticle(articleId, token) {
+  return fetch(`${BASE_URL}/articles/${articleId}/summary`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then(handleResponse);
+}
